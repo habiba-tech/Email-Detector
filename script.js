@@ -4,21 +4,27 @@ const result = document.getElementById("result");
 
 checkBtn.addEventListener("click", () => {
   const email = emailInput.value.trim();
-  if (email === "") {
-    result.innerHTML = "⚠️ Please enter an email address.";
-    result.className = "suspicious";
-    return;
-  }
+  result.className = "";
 
-  // List of suspicious patterns (common fake domains)
-  const suspiciousWords = ["amaz0n", "micr0soft", "paypa1", "gmai1", "yaho0", "supp0rt", "freegift"];
-  const isSuspicious = suspiciousWords.some(word => email.toLowerCase().includes(word));
+  if (!email) return show(" Enter an email!", "red");
 
-  if (isSuspicious) {
-    result.innerHTML = "🚨 Suspicious Email Detected!";
-    result.className = "suspicious";
-  } else {
-    result.innerHTML = "✅ This email looks safe!";
-    result.className = "safe";
-  }
+  result.textContent = " Scanning...";
+  setTimeout(() => {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      return show(" Invalid format!", "red");
+
+    const domain = email.split("@")[1].toLowerCase();
+    const safe = ["gmail.com","yahoo.com","outlook.com","hotmail.com"];
+    const fake = ["amaz0n","paypa1","micr0soft","supp0rt","gmai1","freegift"];
+
+    if (fake.some(w => email.includes(w))) show(" Suspicious Email!", "red");
+    else if (safe.includes(domain)) show(" Safe Email", "green");
+    else show(" Unknown Domain", "orange");
+  }, 1500);
 });
+
+function show(msg, color) {
+  result.textContent = msg;
+  result.style.color = color;
+  result.style.textShadow = `0 0 10px ${color}`;
+}
